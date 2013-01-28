@@ -244,7 +244,12 @@ public class JUnit4TestGrouping {
         }
         
         private static boolean hasAnnotation(AnnotatedElement meta, Class<? extends Annotation> annon) {
-            return meta.isAnnotationPresent(annon);
+            try {
+                return meta.isAnnotationPresent(annon);
+            } catch (Exception ignore) {
+            } catch (LinkageError ignore) {
+            }
+            return false;
         }
         
         private static boolean hasAnnotatedMethod(Class<?> aClass) {
