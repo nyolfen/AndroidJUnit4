@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.uphyca.testing.junit3.dbunit.test;
+package com.uphyca.testing.junit4.dbunit.test;
 
 import org.dbunit.Assertion;
 import org.dbunit.dataset.IDataSet;
@@ -23,7 +23,9 @@ import org.dbunit.operation.DatabaseOperation;
 import android.content.ContentValues;
 import android.content.Context;
 
-import com.uphyca.testing.junit3.dbunit.ProviderDBTestCase;
+import com.uphyca.testing.junit4.dbunit.ProviderDBTestCase;
+
+import static junit.framework.Assert.*;
 
 public class ProviderDBTestCaseTest extends ProviderDBTestCase<TinyContentProvider> {
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.uphyca.testing.junit3.dbunit.test;
+package com.uphyca.testing.junit4.dbunit.test;
 
 import java.sql.SQLException;
 
@@ -24,7 +24,7 @@ import org.dbunit.dataset.ITable;
 import android.content.Context;
 import android.database.DatabaseUtils;
 
-import com.uphyca.testing.junit3.dbunit.AndroidDBTestCase;
+import com.uphyca.testing.junit4.dbunit.AndroidDBTestCase;
 
 public class SampleTest extends AndroidDBTestCase {
 
@@ -41,7 +41,7 @@ public class SampleTest extends AndroidDBTestCase {
     }
 
     @Override
-    protected void setUp() throws Exception {
+	public void setUp() throws Exception {
         super.setUp();
     }
     

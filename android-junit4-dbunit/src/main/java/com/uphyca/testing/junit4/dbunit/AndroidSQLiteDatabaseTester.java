@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.uphyca.testing.junit3.dbunit;
+package com.uphyca.testing.junit4.dbunit;
 
 import org.dbunit.JdbcDatabaseTester;
 

@@ -2,8 +2,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.uphyca</groupId>
-	<artifactId>android-junit3-dbunit</artifactId>
-	<version>0.2-SNAPSHOT</version>
+	<artifactId>android-junit4-dbunit</artifactId>
+	<version>0.1</version>
 	<packaging>jar</packaging>
 	
 	<parent>
@@ -27,6 +27,13 @@
             <scope>provided</scope>
         </dependency>
 		
+        <dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>provided</scope>
+		</dependency>
+        
         <dependency>
             <groupId>org.dbunit</groupId>
             <artifactId>dbunit</artifactId>

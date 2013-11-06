@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.uphyca.testing.junit3.dbunit;
+package com.uphyca.testing.junit4.dbunit;
 
-import java.io.File;
 import java.io.InputStream;
 
 import org.dbunit.DBTestCase;
@@ -28,26 +27,25 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlProducer;
 import org.dbunit.operation.DatabaseOperation;
+import org.junit.After;
+import org.junit.Before;
 import org.xml.sax.InputSource;
 
+import com.uphyca.testing.ProviderTestCase2;
+
+import android.content.ContentProvider;
 import android.content.Context;
-import android.content.res.Resources;
-import android.test.AndroidTestCase;
-import android.test.IsolatedContext;
-import android.test.RenamingDelegatingContext;
-import android.test.mock.MockContentResolver;
-import android.test.mock.MockContext;
 
 /**
  * TestCase that uses a AndroidSQLiteDatabaseTester.
  */
-public abstract class AndroidDBTestCase extends AndroidTestCase {
+public abstract class ProviderDBTestCase<T extends ContentProvider> extends ProviderTestCase2<T> {
 
-    private static final class DBTestCaseDelegate extends DBTestCase {
+    private static final class DBTestCaseDelegate<T extends ContentProvider> extends DBTestCase {
 
-        private AndroidDBTestCase owner;
+        private ProviderDBTestCase<T> owner;
 
-        public DBTestCaseDelegate(AndroidDBTestCase owner) {
+        public DBTestCaseDelegate(ProviderDBTestCase<T> owner) {
             this.owner = owner;
         }
 
@@ -101,34 +99,12 @@ public abstract class AndroidDBTestCase extends AndroidTestCase {
         }
     }
 
-    private class MockContext2 extends MockContext {
+    private final DBTestCaseDelegate<T> mDBTestCase;
 
-        @Override
-        public Resources getResources() {
-            return getContext().getResources();
-        }
-
-        @Override
-        public File getDir(String name,
-                           int mode) {
-            // name the directory so the directory will be separated from
-            // one created through the regular Context
-            return getContext().getDir("mockcontext2_" + name,
-                                       mode);
-        }
-
-        @Override
-        public Context getApplicationContext() {
-            return this;
-        }
-    }
-
-    private IsolatedContext mDatabaseContext;
-    private MockContentResolver mResolver;
-    private final DBTestCaseDelegate mDBTestCase;
-
-    public AndroidDBTestCase() {
-        mDBTestCase = new DBTestCaseDelegate(this);
+    public ProviderDBTestCase(Class<T> providerClass,
+                              String providerAuthority) {
+        super(providerClass, providerAuthority);
+        mDBTestCase = new DBTestCaseDelegate<T>(this);
     }
 
     /*
@@ -200,18 +176,11 @@ public abstract class AndroidDBTestCase extends AndroidTestCase {
      * 
      * @see org.dbunit.DatabaseTestCase#setUp()
      */
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
-        mResolver = new MockContentResolver();
-        final String filenamePrefix = "test.";
-        RenamingDelegatingContext targetContextWrapper = new RenamingDelegatingContext(new MockContext2(), // The context that most methods are
-                                                                                                           //delegated to
-                getContext(), // The context that file methods are delegated to
-                filenamePrefix);
-        mDatabaseContext = new IsolatedContext(mResolver, targetContextWrapper);
-
-        onCreateDatabase(mDatabaseContext);
+        onCreateDatabase(getMockContext());
 
         mDBTestCase.setUp();
     }
@@ -221,7 +190,8 @@ public abstract class AndroidDBTestCase extends AndroidTestCase {
      * 
      * @see org.dbunit.DatabaseTestCase#tearDown()
      */
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         mDBTestCase.tearDown();
         super.tearDown();
     }
@@ -264,18 +234,10 @@ public abstract class AndroidDBTestCase extends AndroidTestCase {
         FlatXmlProducer producer = new FlatXmlProducer(new InputSource(in), false);
         return new FlatXmlDataSet(producer);
     }
-
+    
     protected IDataSet getFlatXmlDataSetFromClasspathResrouce(String file) throws DataSetException {
         InputStream in = getContext().getClassLoader().getResourceAsStream(file);
         FlatXmlProducer producer = new FlatXmlProducer(new InputSource(in), false);
         return new FlatXmlDataSet(producer);
-    }
-
-    /**
-     * Gets the {@link IsolatedContext} created by this class during initialization.
-     * @return The {@link IsolatedContext} instance
-     */
-    public IsolatedContext getMockContext() {
-        return mDatabaseContext;
     }
 }
