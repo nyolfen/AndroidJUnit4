@@ -39,10 +39,10 @@ import android.test.RenamingDelegatingContext;
 import android.test.mock.MockContentResolver;
 import android.test.mock.MockContext;
 
-import com.uphyca.testing.AndroidTestCase;
+import com.uphyca.testing.InstrumentationTestCase;
 import com.uphyca.testing.junit4.dbunit.AndroidSQLiteDatabaseTester;
 
-public abstract class AndroidDBTestCase extends AndroidTestCase {
+public abstract class AndroidDBTestCase extends InstrumentationTestCase {
 	private static final class DBTestCaseDelegate extends DBTestCase {
 		private final AndroidDBTestCase owner;
 
@@ -103,14 +103,14 @@ public abstract class AndroidDBTestCase extends AndroidTestCase {
 	private class MockContext2 extends MockContext {
 		@Override
 		public Resources getResources() {
-			return getContext().getResources();
+			return getInstrumentation().getContext().getResources();
 		}
 
 		@Override
 		public File getDir(final String name, final int mode) {
 			// name the directory so the directory will be separated from
 			// one created through the regular Context
-			return getContext().getDir("mockcontext2_" + name, mode);
+			return getInstrumentation().getContext().getDir("mockcontext2_" + name, mode);
 		}
 
 		@Override
@@ -207,7 +207,7 @@ public abstract class AndroidDBTestCase extends AndroidTestCase {
 	protected Context getDatabaseContext() {
 		return new IsolatedContext(new MockContentResolver(), new RenamingDelegatingContext(new MockContext2(), // The context that most methods are
 				// delegated to
-				getContext(), // The context that file methods are delegated to
+				getInstrumentation().getTargetContext(), // The context that file methods are delegated to
 				"test."));
 	}
 
@@ -246,13 +246,13 @@ public abstract class AndroidDBTestCase extends AndroidTestCase {
 	}
 
 	protected IDataSet getFlatXmlDataSetFromRawResrouce(final int id) throws DataSetException {
-		final InputStream in = getContext().getResources().openRawResource(id);
+		final InputStream in = getInstrumentation().getContext().getResources().openRawResource(id);
 		final FlatXmlProducer producer = new FlatXmlProducer(new InputSource(in), false);
 		return new FlatXmlDataSet(producer);
 	}
 
 	protected IDataSet getFlatXmlDataSetFromClasspathResrouce(final String file) throws DataSetException {
-		final InputStream in = getContext().getClassLoader().getResourceAsStream(file);
+		final InputStream in = getInstrumentation().getContext().getClassLoader().getResourceAsStream(file);
 		final FlatXmlProducer producer = new FlatXmlProducer(new InputSource(in), false);
 		return new FlatXmlDataSet(producer);
 	}

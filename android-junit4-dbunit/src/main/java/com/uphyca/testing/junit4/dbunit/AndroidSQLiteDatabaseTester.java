@@ -16,6 +16,8 @@
 package com.uphyca.testing.junit4.dbunit;
 
 import org.dbunit.JdbcDatabaseTester;
+import org.dbunit.database.DatabaseConfig;
+import org.dbunit.database.IDatabaseConnection;
 
 import android.content.Context;
 
@@ -43,6 +45,13 @@ public class AndroidSQLiteDatabaseTester extends JdbcDatabaseTester {
                                                    String databaseName) {
         String dbPath = context.getDatabasePath(databaseName).getAbsolutePath();
         return CONNECTION_URL_SCHEMA + dbPath;
+    }
+    
+    @Override
+    public IDatabaseConnection getConnection() throws Exception {
+        IDatabaseConnection databaseConnection = super.getConnection();
+        databaseConnection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY,new SQLiteDataTypeFactory());
+        return databaseConnection;
     }
 
 }
